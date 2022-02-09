@@ -17,7 +17,7 @@ ssize_t write_all(int fd, const void *buf, size_t count) { // signed size_t
         if(res < 0) {
             return res;
         }
-        bytes_written += res;
+        bytes_written += (size_t)res;
     }
     return (ssize_t)bytes_written;
 }
