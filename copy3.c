@@ -15,7 +15,7 @@ ssize_t write_all(int fd, const void *buf, size_t count) {
         if(res < 0) {
             return res;
         }
-        bytes_written += res;
+        bytes_written += (size_t)res;
     }
     return (ssize_t)bytes_written;
 }
@@ -23,35 +23,39 @@ ssize_t write_all(int fd, const void *buf, size_t count) {
 
 int copy_file(int src_fd, int dest_fd) {
     ssize_t bytes = 0;
-    int err;
+    int err = 0;
     char* data = (char*)malloc(DEFAULT_CHUNK); 
+    if(data == NULL) {
+        err = errno;
+        perror("malloc");
+        return err;
+    }
     while(1) {
         bytes = read(src_fd, data, DEFAULT_CHUNK);
         if(bytes == -1) {
             err = errno;
             perror("read");
-            return err;
+            break;
         }
         if(bytes == 0) {
             break;
         }
-        bytes = write_all(dest_fd, data, bytes);
+        bytes = write_all(dest_fd, data, (size_t)bytes);
         if(bytes < 0) {
             err = errno;
-            perror("read");
-            free(data);
-            return err;
+            perror("write");
+            break;
         }
     }
     free(data);
-    return 0;
+    return err;
 }
 
 
 int main(int argc, char* argv[]) {
     int result = 0;
     if(argc != 3) {
-        fprintf(stderr, "Usage: %s path text\n", argv[0]);
+        fprintf(stderr, "Usage: %s src dest\n", argv[0]);
         return 1;
     }
 
