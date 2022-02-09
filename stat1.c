@@ -37,13 +37,13 @@ int main(int argc, char* argv[]) {
     }
 
     printf("File type:              %s\n", device_type(sb.st_mode));
-    printf("INode:                  %ld\n", (long)sb.st_ino);
-    printf("Access mode:            %lo (octal)\n", (unsigned long)sb.st_mode);
-    printf("number of links:        %ld\n", (long)sb.st_nlink);
-    printf("Owner:                  UID=%ld\tGID=%ld\n", (long)sb.st_uid, (long)sb.st_gid);
-    printf("preferred block size:   %ld byte\n", (long)sb.st_blksize);
-    printf("File size:              %lld byte\n", (long long)sb.st_size);
-    printf("Allocated blocks:       %lld\n", (long long)sb.st_blocks);
+    printf("INode:                  %ld\n", (__uintmax_t)sb.st_ino);
+    printf("Access mode:            %lo (octal)\n", (__uintmax_t)sb.st_mode);
+    printf("number of links:        %ld\n", (__uintmax_t)sb.st_nlink);
+    printf("Owner:                  UID=%ld\tGID=%ld\n", (__uintmax_t)sb.st_uid, (__uintmax_t)sb.st_gid);
+    printf("preferred block size:   %ld byte\n", (__uintmax_t)sb.st_blksize);
+    printf("File size:              %lld byte\n", (__uintmax_t)sb.st_size);
+    printf("Allocated blocks:       %lld\n", (__uintmax_t)sb.st_blocks);
 
     const size_t time_str_size = sizeof("Day Mon dd hh:mm:ss yyyy\n");
 
