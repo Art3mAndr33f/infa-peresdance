@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <stdint.h>
+
 
 
 const char* device_type(const mode_t mode) {
@@ -37,15 +39,15 @@ int main(int argc, char* argv[]) {
     }
 
     printf("File type:              %s\n", device_type(sb.st_mode));
-    printf("INode:                  %ld\n", (__uintmax_t)sb.st_ino);
-    printf("Access mode:            %lo (octal)\n", (__uintmax_t)sb.st_mode);
-    printf("number of links:        %ld\n", (__uintmax_t)sb.st_nlink);
-    printf("Owner:                  UID=%ld\tGID=%ld\n", (__uintmax_t)sb.st_uid, (__uintmax_t)sb.st_gid);
-    printf("preferred block size:   %ld byte\n", (__uintmax_t)sb.st_blksize);
-    printf("File size:              %lld byte\n", (__uintmax_t)sb.st_size);
-    printf("Allocated blocks:       %lld\n", (__uintmax_t)sb.st_blocks);
+    printf("INode:                  %ju\n", (uintmax_t)sb.st_ino);
+    printf("Access mode:            %04jo (octal)\n", (uintmax_t)(sb.st_mode & ALLPERMS));
+    printf("Number of links:        %ju\n", (uintmax_t)sb.st_nlink);
+    printf("Owner:                  UID=%ju\tGID=%ju\n", (uintmax_t)sb.st_uid, (uintmax_t)sb.st_gid);
+    printf("Preferred block size:   %ju byte\n", (uintmax_t)sb.st_blksize);
+    printf("File size:              %ju byte\n", (uintmax_t)sb.st_size);
+    printf("Allocated blocks:       %ju\n", (uintmax_t)sb.st_blocks);
 
-    const size_t time_str_size = sizeof("Day Mon dd hh:mm:ss yyyy\n");
+    const size_t time_str_size = sizeof("Day Mon dd hh:mm:ss yyyy");
 
     struct tm curr_time;
     char buf[time_str_size];
@@ -55,15 +57,15 @@ int main(int argc, char* argv[]) {
     if(!strftime(buf, sizeof(buf), fmt, gmtime_r(&sb.st_ctime, &curr_time))) {
         exit(EXIT_FAILURE);
     }
-    printf("C_TIME                  %s\n", buf); //время последнего изменения статуса файла
+    printf("C_TIME (UTC)            %s\n", buf); //время последнего изменения статуса файла
     if(!strftime(buf, sizeof(buf), fmt, gmtime_r(&sb.st_atime, &curr_time))) {
         exit(EXIT_FAILURE);
     }
-    printf("A_TIME                  %s\n", buf);//время последнего доступа к файлу
+    printf("A_TIME (UTC)            %s\n", buf); //время последнего доступа к файлу
     if(!strftime(buf, sizeof(buf), fmt, gmtime_r(&sb.st_mtime, &curr_time))) {
         exit(EXIT_FAILURE);
     }
-    printf("M_TIME                  %s\n", buf);//время последней модификации файла
+    printf("M_TIME (UTC)            %s\n", buf); //время последней модификации файла
 
     return 0;
 }
