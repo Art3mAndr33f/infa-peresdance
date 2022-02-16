@@ -3,6 +3,9 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
 
 char dtype_char(unsigned d_type) {
@@ -20,7 +23,7 @@ char dtype_char(unsigned d_type) {
 
 
 char mode_char(mode_t st_mode) {
-    switch (st_mode & S_IFMT) {
+    switch (st_mode & S_IFMT) { //S_IFMT - mask
         case S_IFBLK: return 'b'; 
         case S_IFCHR: return 'c';
         case S_IFDIR: return 'd'; 
@@ -36,21 +39,23 @@ char mode_char(mode_t st_mode) {
 int main(void) {
     DIR* dir_fd = opendir("."); 
     //возвращает указатель на поток каталога.
+
     if(!dir_fd) {
         return 1;
     }
     
-    int errno;
     while(1) {
         errno = 0;
         struct dirent *entry = readdir(dir_fd); 
-        //возвращает указатель на структуру dirent, представляющую следующую запись каталога в потоке каталогов, на который указывает dir_fd.
+        /*возвращает указатель на структуру dirent, 
+        представляющую следующую запись каталога в потоке каталогов, на который указывает dir_fd.*/
+
         if(entry == NULL) {
             if(errno == 0) {
                 break;
             }
             perror("readdir");
-            close(dir_fd);
+            closedir(dir_fd);
             return 2;
         }
 
@@ -62,7 +67,7 @@ int main(void) {
                 entry_type = mode_char(sb.st_mode);
             }
         }
-        printf("%c %s \n", entry_type, entry->d_name);
+        printf("%c %s\n", entry_type, entry->d_name);
     }
 
     closedir(dir_fd);
