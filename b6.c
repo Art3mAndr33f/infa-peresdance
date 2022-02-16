@@ -40,7 +40,7 @@ int readdir_func(DIR* dir_fd) {
     struct dirent* entry;
     int fd = dirfd(dir_fd);
     //возвращает дескриптор файла, связанный с dir_fd
-    if(dir_fd == NULL) {
+    if(fd == -1) {
         perror("dirfd"); 
         return 1;
     }  
@@ -70,11 +70,11 @@ int main(int argc, char* argv[]) {
         perror("Failure to open dir");
         exit(EXIT_FAILURE);
     }
-
     if(readdir_func(dir_fd) != 0) {
         closedir(dir_fd);
         perror("Failure to read directory");
         exit(EXIT_FAILURE);
     }
+    closedir(dir_fd);
     return 0;
 }
